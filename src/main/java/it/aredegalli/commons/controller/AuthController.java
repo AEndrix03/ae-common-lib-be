@@ -1,12 +1,12 @@
 package it.aredegalli.commons.controller;
 
+import it.aredegalli.commons.dto.auth.LoginDto;
+import it.aredegalli.commons.dto.auth.RegisterDto;
 import it.aredegalli.commons.model.User;
 import it.aredegalli.commons.service.auth.UserService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,14 +24,15 @@ public class AuthController {
         return this.userService.getUserInfo();
     }
 
-    @GetMapping("/exists/username")
-    public Boolean existsUsername(@RequestParam String username) {
-        return this.userService.existsUsername(username);
+    @SneakyThrows
+    @PostMapping("/login")
+    public User login(@RequestBody LoginDto loginDto) {
+        return this.userService.login(loginDto);
     }
 
-    @GetMapping("/exists/email")
-    public Boolean existsEmail(@RequestParam String email) {
-        return this.userService.existsEmail(email);
+    @SneakyThrows
+    @PostMapping("/register")
+    public User register(@RequestBody RegisterDto registerDto) {
+        return this.userService.register(registerDto);
     }
-
 }
