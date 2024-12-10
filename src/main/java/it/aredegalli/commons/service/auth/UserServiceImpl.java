@@ -8,7 +8,7 @@ import it.aredegalli.commons.dto.auth.RegisterDto;
 import it.aredegalli.commons.enums.auth.LoginTypeEnum;
 import it.aredegalli.commons.model.SecUser;
 import it.aredegalli.commons.model.User;
-import it.aredegalli.commons.repository.UserRepository;
+import it.aredegalli.commons.repository.auth.UserRepository;
 import it.aredegalli.commons.security.crypto.AESCrypto;
 import it.aredegalli.commons.security.crypto.Hash;
 import it.aredegalli.commons.security.jwt.JwtService;
@@ -18,8 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -58,9 +56,6 @@ public class UserServiceImpl implements UserService {
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .username(user.getUsername())
-                .lastLogin(user.getLastLogin())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
                 .password(user.getPassword())
                 .active(user.getActive())
                 .build();
@@ -81,8 +76,8 @@ public class UserServiceImpl implements UserService {
         user.setSurname(registerDto.getSurname());
         user.setPassword(this.hash.hashPassword(registerDto.getPassword()));
         user.setActive(true);
-        encryptUser(user);
-        this.updateLastLogin(user);
+        encryptUserInfo(user);
+        this.userRepository.save(user);
 
         return this.login(registerDto);
     }
@@ -123,7 +118,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         User user = this.getUser(userDetails.getUsername());
-        decryptUser((SecUser) user);
+        decryptUserInfo((SecUser) user);
         return UserDto.builder()
                 .token(this.jwtService.generateToken((SecUser) user))
                 .id(user.getId())
@@ -131,9 +126,6 @@ public class UserServiceImpl implements UserService {
                 .surname(user.getSurname())
                 .email(user.getEmail())
                 .username(user.getUsername())
-                .lastLogin(user.getLastLogin())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
                 .password(user.getPassword())
                 .active(user.getActive())
                 .build();
@@ -160,21 +152,20 @@ public class UserServiceImpl implements UserService {
         };
     }
 
-    private void updateLastLogin(SecUser user) {
-        user.setLastLogin(LocalDateTime.now());
-        this.userRepository.save(user);
-    }
-
     private SecUser _getUser(String login) {
         SecUser user = switch (loginType) {
             case EMAIL -> this.userRepository.getSecUserByEmail(login);
             case USERNAME -> this.userRepository.getSecUserByUsername(login);
         };
-        decryptUser(user);
+        decryptUserInfo(user);
         return user;
     }
 
-    private void decryptUser(SecUser authUser) {
+    private void decryptUserInfo(SecUser authUser) {
+        if (authUser == null) {
+            return;
+        }
+
         try {
             authUser.setName(this.crypto.decrypt(authUser.getName()));
             authUser.setSurname(this.crypto.decrypt(authUser.getSurname()));
@@ -183,7 +174,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void encryptUser(SecUser authUser) {
+    private void encryptUserInfo(SecUser authUser) {
+        if (authUser == null) {
+            return;
+        }
+
         try {
             authUser.setName(this.crypto.encrypt(authUser.getName()));
             authUser.setSurname(this.crypto.encrypt(authUser.getSurname()));

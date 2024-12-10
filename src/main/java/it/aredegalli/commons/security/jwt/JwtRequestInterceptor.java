@@ -1,7 +1,7 @@
 package it.aredegalli.commons.security.jwt;
 
 import it.aredegalli.commons.model.SecUser;
-import it.aredegalli.commons.repository.UserRepository;
+import it.aredegalli.commons.repository.auth.UserRepository;
 import it.aredegalli.commons.service.auth.UserProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

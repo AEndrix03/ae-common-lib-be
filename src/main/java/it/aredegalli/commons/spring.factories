@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.mylibrary.config.AuthAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=it.aredegalli.commons.config.CommonAutoConfiguration

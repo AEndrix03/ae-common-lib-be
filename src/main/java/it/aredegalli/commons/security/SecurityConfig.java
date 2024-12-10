@@ -33,6 +33,7 @@ import java.util.Optional;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Lazy
     @Autowired
     private UserService userService;
 

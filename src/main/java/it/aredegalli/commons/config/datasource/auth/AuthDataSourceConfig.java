@@ -5,8 +5,6 @@ import it.aredegalli.commons.config.properties.CommonProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
-
 @Configuration
 public class AuthDataSourceConfig {
 
@@ -17,7 +15,7 @@ public class AuthDataSourceConfig {
     }
 
     @Bean
-    public DataSource dataSource() {
+    public HikariDataSource authDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(this.databaseProperties.getUrl());
         dataSource.setUsername(this.databaseProperties.getUsername());

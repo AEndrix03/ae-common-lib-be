@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -20,9 +18,6 @@ public class UserDto implements User {
     private String surname;
     private String email;
     private String password;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime lastLogin;
     private Boolean active;
 
     private String token;

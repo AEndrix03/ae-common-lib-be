@@ -2,13 +2,19 @@ package it.aredegalli.commons.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
+@EnableJpaRepositories(
+        basePackages = "it.aredegalli.commons.repository.auth",
+        entityManagerFactoryRef = "authEntityManagerFactory",
+        transactionManagerRef = "authTransactionManager"
+)
 public class AuthJpaConfig {
 
     private final HikariDataSource authDataSource;
@@ -18,12 +24,13 @@ public class AuthJpaConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean authEntityManagerFactory(EntityManagerFactoryBuilder builder) {
-        return builder
-                .dataSource(authDataSource)
-                .packages("it.aredegalli.commons.model")
-                .persistenceUnit("authPersistenceUnit")
-                .build();
+    public LocalContainerEntityManagerFactoryBean authEntityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setDataSource(authDataSource);
+        factoryBean.setPackagesToScan("it.aredegalli.commons.model");
+        factoryBean.setPersistenceUnitName("authPersistenceUnit");
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        return factoryBean;
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package it.aredegalli.commons.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecUser implements User, UserDetails {
+public class SecUser implements User, UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,17 +38,9 @@ public class SecUser implements User, UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore()
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(name = "last_login", nullable = false)
-    private LocalDateTime lastLogin;
 
     @Column(name = "active", nullable = false)
     private Boolean active;
@@ -59,6 +52,6 @@ public class SecUser implements User, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.active;
     }
 }
