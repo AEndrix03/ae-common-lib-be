@@ -1,13 +1,13 @@
 package it.aredegalli.commons.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.aredegalli.commons.service.auth.UserDetailsDecorator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class SecUser implements User, UserDetails, Serializable {
+public class SecUser implements User, UserDetailsDecorator, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +54,5 @@ public class SecUser implements User, UserDetails, Serializable {
     public boolean isEnabled() {
         return this.active;
     }
+
 }
