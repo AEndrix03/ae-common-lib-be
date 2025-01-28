@@ -1,6 +1,7 @@
 package it.aredegalli.commons.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.aredegalli.commons.service.auth.UserDetailsDecorator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SecUser implements User, UserDetailsDecorator, Serializable {
 
     @Id
