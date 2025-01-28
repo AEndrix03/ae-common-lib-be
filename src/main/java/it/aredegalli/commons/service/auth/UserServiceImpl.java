@@ -15,7 +15,6 @@ import it.aredegalli.commons.security.jwt.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -112,12 +111,12 @@ public class UserServiceImpl implements UserService {
         if (this.jwtService.isTokenExpired(token.substring(7))) {
             return null;
         }
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(this.jwtService.extractUsername(token.substring(7)));
+        UserDetailsDecorator userDetails = (UserDetailsDecorator) this.userDetailsService.loadUserByUsername(this.jwtService.extractUsername(token.substring(7)));
 
         if (userDetails == null) {
             return null;
         }
-        User user = this.getUser(userDetails.getUsername());
+        User user = this.getUser(userDetails.getAuthUsername(this.loginType));
         decryptUserInfo((SecUser) user);
         return UserDto.builder()
                 .token(this.jwtService.generateToken((SecUser) user))
